@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Tracker-Master</string>
+    <string name="action_settings">Add contact</string>
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="some_went_wrong_only"></string>
+    <string name="title_activity_add_target">AddTarget</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_target_details">TargetDetails</string>
+    <string name="title_activity_register">Register</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_view_target">ViewTarget</string>
+</resources>
