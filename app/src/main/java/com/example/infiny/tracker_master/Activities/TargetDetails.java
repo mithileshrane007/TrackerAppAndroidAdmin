@@ -1,11 +1,11 @@
 package com.example.infiny.tracker_master.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.EditText;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,8 +16,7 @@ import com.squareup.picasso.Picasso;
 
 public class TargetDetails extends AppCompatActivity {
 
-    private TextInputLayout fName,lName,email,phone;
-    private EditText etFirstName,etLastName,etEmail,etPhone;
+    private TextView tvFirstName,tvLastName,tvEmail,tvPhone;
     private TextView tvReports;
     Target target;
     ImageView ivBackground, ivProfileImage;
@@ -35,24 +34,20 @@ public class TargetDetails extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
-        fName= (TextInputLayout) findViewById(R.id.fName);
-        lName= (TextInputLayout) findViewById(R.id.lName);
-        email= (TextInputLayout) findViewById(R.id.email);
-        phone= (TextInputLayout) findViewById(R.id.phone);
-        etFirstName = (EditText) findViewById(R.id.etFirstName);
-        etLastName = (EditText) findViewById(R.id.etLastName);
-        etEmail = (EditText) findViewById(R.id.etEmail);
-        etPhone = (EditText) findViewById(R.id.etPhone);
+        tvFirstName = (TextView) findViewById(R.id.tvFirstName);
+        tvLastName = (TextView) findViewById(R.id.tvLastName);
+        tvEmail = (TextView) findViewById(R.id.tvEmail);
+        tvPhone = (TextView) findViewById(R.id.tvPhone);
         tvReports = (TextView) findViewById(R.id.tvReports);
         ivBackground = (ImageView) findViewById(R.id.ivBackground);
         ivProfileImage = (ImageView) findViewById(R.id.ivProfileImage);
 
         target = (Target) getIntent().getSerializableExtra("target");
 
-        etFirstName.setText(target.getFirstName());
-        etLastName.setText(target.getLastName());
-        etEmail.setText(target.getEmail());
-        etPhone.setText(target.getPhoneNo());
+        tvFirstName.setText(target.getFirstName());
+        tvLastName.setText(target.getLastName());
+        tvEmail.setText(target.getEmail());
+        tvPhone.setText(target.getPhoneNo());
 
         Picasso.with(this)
                 .load(Config.BASE_URL + target.getProfilePic())
@@ -63,6 +58,13 @@ public class TargetDetails extends AppCompatActivity {
                 .load(Config.BASE_URL + target.getProfilePic())
                 .placeholder(R.drawable.ic_person_36dp)
                 .into(ivProfileImage);
+
+        tvReports.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(TargetDetails.this,MapsActivity.class));
+            }
+        });
 
     }
 

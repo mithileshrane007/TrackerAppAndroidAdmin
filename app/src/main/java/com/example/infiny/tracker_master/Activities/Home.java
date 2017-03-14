@@ -75,6 +75,7 @@ public class Home extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(getApplicationContext());
         rvTargetList.setLayoutManager(mLayoutManager);
         rvTargetList.setItemAnimator(new DefaultItemAnimator());
+        rvTargetList.setHasFixedSize(true);
         rvTargetList.setAdapter(targetListAdapter);
 
         new MaterialTapTargetPrompt.Builder(Home.this)
@@ -122,7 +123,7 @@ public class Home extends AppCompatActivity {
                 .setBackgroundColour(Color.parseColor("#009688"))
                 .setAnimationInterpolator(new FastOutSlowInInterpolator())
                 .setMaxTextWidth(R.dimen.tap_target_menu_max_width)
-                .setIcon(android.R.drawable.ic_menu_add)
+                .setIcon(R.drawable.ic_add_circle_outline_white_48dp)
                 .setTarget(R.id.add_contact)
                 .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
                     @Override
