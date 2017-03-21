@@ -1,6 +1,5 @@
 package com.example.infiny.tracker_master.Activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -9,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.infiny.tracker_master.Fragments.DateDialogFragment;
 import com.example.infiny.tracker_master.Helpers.Config;
 import com.example.infiny.tracker_master.Models.Target;
 import com.example.infiny.tracker_master.R;
@@ -62,7 +62,8 @@ public class TargetDetails extends AppCompatActivity {
         tvReports.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(TargetDetails.this,MapsActivity.class));
+                new DateDialogFragment().show(getFragmentManager(), "Select dates for Report");
+//                startActivity(new Intent(TargetDetails.this,MapsActivity.class));
             }
         });
 

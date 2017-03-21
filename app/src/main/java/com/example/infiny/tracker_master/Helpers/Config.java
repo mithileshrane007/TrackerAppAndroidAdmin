@@ -6,6 +6,6 @@ package com.example.infiny.tracker_master.Helpers;
 
 public class Config {
 
-    public static String BASE_URL = "http://dev2.infiny.in:3000/";
+    public static String BASE_URL = "http://dev2.infiny.in:3030/";
 
 }

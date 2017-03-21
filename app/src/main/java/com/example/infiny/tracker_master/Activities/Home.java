@@ -1,16 +1,20 @@
 package com.example.infiny.tracker_master.Activities;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.util.ArrayMap;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,6 +47,7 @@ import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt;
 
 public class Home extends AppCompatActivity {
     MaterialTapTargetPrompt mFabPrompt;
+    SearchView searchView;
     SessionManager sessionManager;
     MenuItem menuItem;
     View view;
@@ -50,6 +55,7 @@ public class Home extends AppCompatActivity {
     RecyclerView rvTargetList;
     TargetListAdapter targetListAdapter;
     private LinearLayoutManager mLayoutManager;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,12 +68,22 @@ public class Home extends AppCompatActivity {
         sessionManager = new SessionManager(this);
         targetList = new ArrayList<>();
         rvTargetList = (RecyclerView) findViewById(R.id.rvTargetList);
+        searchView = (SearchView) findViewById(R.id.search_box);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(false);
+                getTargets();
+            }
+        });
 
         targetListAdapter = new TargetListAdapter(this, targetList, new OnItemClickListener() {
             @Override
             public void onChatItemClick(Target targetItem) {
                 Intent intent = new Intent(Home.this, TargetDetails.class);
-                intent.putExtra("target",targetItem);
+                intent.putExtra("target", targetItem);
                 startActivity(intent);
             }
         });
@@ -83,34 +99,35 @@ public class Home extends AppCompatActivity {
                 .setBackgroundColour(Color.parseColor("#009688"))
                 .setPrimaryText("Here is an interesting feature")
                 .setSecondaryText("Tap here and you will be surprised")
-                .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener(){
+                .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
                     @Override
                     public void onHidePrompt(MotionEvent event, boolean tappedTarget) {
                         //TODO: Store in SharedPrefs so you don't show this prompt again.
                     }
+
                     @Override
-                    public void onHidePromptComplete(){
+                    public void onHidePromptComplete() {
                         showSearchPrompt(view);
                     }
                 })
                 .show();
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_home, menu);
-        menuItem =menu.findItem(R.id.add_contact);
+        menuItem = menu.findItem(R.id.add_contact);
 
         return true;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
         if (id == R.id.add_contact) {
-            startActivity(new Intent(Home.this,AddTarget.class));
+            startActivity(new Intent(Home.this, AddTarget.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -140,7 +157,7 @@ public class Home extends AppCompatActivity {
                 .show();
     }
 
-    public void getTargets(){
+    public void getTargets() {
         String url = Config.BASE_URL + "api/v1/targets_show_targets";
         if (ConnectivityReceiver.isConnected()) {
             final ProgressDialog pDialog = new ProgressDialog(this);
@@ -239,5 +256,21 @@ public class Home extends AppCompatActivity {
         TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
         textView.setTextColor(color);
         snackbar.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setMessage("Exit App?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Intent.ACTION_MAIN);
+                        intent.addCategory(Intent.CATEGORY_HOME);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);//***Change Here***
+                        startActivity(intent);
+                        finishAffinity();
+                    }
+                }).setNegativeButton("No", null).show();
     }
 }

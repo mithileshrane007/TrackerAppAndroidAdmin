@@ -16,7 +16,7 @@
         android:background="@color/colorPrimary"
         android:gravity="center">
 
-        <EditText
+        <android.support.v7.widget.SearchView
             android:id="@+id/search_box"
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -26,13 +26,19 @@
             android:padding="10dp" />
     </RelativeLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvTargetList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/rl_searchbox"
-        android:layout_centerHorizontal="true"
-        app:layoutManager="LinearLayoutManager"/>
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rl_searchbox">
 
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvTargetList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            app:layoutManager="LinearLayoutManager" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

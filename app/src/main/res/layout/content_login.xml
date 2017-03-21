@@ -69,7 +69,8 @@
                 android:background="@drawable/bt_round"
                 android:layout_marginTop="24dp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"                android:textAllCaps="false" />
+                android:layout_marginRight="16dp"
+                android:textAllCaps="false" />
 
             <TextView
                 android:id="@+id/tvSignUp"
