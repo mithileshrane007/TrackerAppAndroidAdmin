@@ -50,12 +50,15 @@ public class TargetListAdapter extends RecyclerView.Adapter<TargetListAdapter.My
         Target targetData = targetList.get(position);
 
         holder.bind(targetList.get(position), listener);
+
+        if(targetData.getIsOnline()){
+            holder.ivOnline.setVisibility(View.VISIBLE);
+        }
+
         Picasso.with(context)
                 .load(Config.BASE_URL + targetData.getProfilePic())
                 .placeholder(R.drawable.ic_person_36dp)
                 .into(holder.ivProfPic);
-
-
         holder.tvName.setText(targetData.getFirstName()+" "+targetData.getLastName());
         holder.tvEmail.setText(targetData.getEmail());
 
@@ -75,7 +78,7 @@ public class TargetListAdapter extends RecyclerView.Adapter<TargetListAdapter.My
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         ////implements View.OnCreateContextMenuListener
-        ImageView ivProfPic;
+        ImageView ivProfPic,ivOnline;
         TextView tvName, tvEmail;
         RelativeLayout relativeLayout;
         View seperator;
@@ -85,6 +88,7 @@ public class TargetListAdapter extends RecyclerView.Adapter<TargetListAdapter.My
             ivProfPic = (ImageView) view.findViewById(R.id.ivProfPic);
             tvName = (TextView) view.findViewById(R.id.tvName);
             tvEmail = (TextView) view.findViewById(R.id.tvEmail);
+            ivOnline = (ImageView) view.findViewById(R.id.ivOnline);
 
             relativeLayout = (RelativeLayout) view.findViewById(R.id.targetList);
 

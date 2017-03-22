@@ -400,7 +400,6 @@ public class AddTarget extends AppCompatActivity {
 
         request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         TrackerMaster.getInstance().addToRequestQueue(request);
-
     }
 
     private void selectImage() {

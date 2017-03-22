@@ -188,6 +188,7 @@ public class Home extends AppCompatActivity {
                                         target.setEmail(jsonResult.getJSONObject(i).getString("email"));
                                         target.setTimeInterval(jsonResult.getJSONObject(i).getString("track_time_interval"));
                                         target.setTimeOut(jsonResult.getJSONObject(i).getString("track_time_out"));
+                                        target.setIsOnline(jsonResult.getJSONObject(i).getBoolean("is_online"));
 
                                         targetList.add(target);
                                         targetListAdapter.notifyDataSetChanged();

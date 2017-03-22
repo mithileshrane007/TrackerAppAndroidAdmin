@@ -15,6 +15,7 @@ public class Target implements Serializable {
     String phoneNo;
     String timeInterval;
     String timeOut;
+    boolean isOnline;
 
     public String getTrackingId() {
         return trackingId;
@@ -78,5 +79,13 @@ public class Target implements Serializable {
 
     public void setTimeOut(String timeOut) {
         this.timeOut = timeOut;
+    }
+
+    public boolean getIsOnline() {
+        return isOnline;
+    }
+
+    public void setIsOnline(boolean isOnline) {
+        this.isOnline = isOnline;
     }
 }

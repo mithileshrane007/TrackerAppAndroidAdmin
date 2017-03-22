@@ -36,6 +36,18 @@
             android:textColor="#1e1e1f"
             android:textSize="20dp" />
 
+        <ImageView
+            android:id="@+id/ivOnline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:layout_marginEnd="30dp"
+            android:visibility="gone"
+            app:srcCompat="@android:drawable/presence_online" />
+
+
     </LinearLayout>
 
 
