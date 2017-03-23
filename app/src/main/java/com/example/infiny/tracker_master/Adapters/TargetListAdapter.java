@@ -101,7 +101,7 @@ public class TargetListAdapter extends RecyclerView.Adapter<TargetListAdapter.My
                 @Override
                 public void onClick(View v) {
 
-                    listener.onChatItemClick(item);
+                    listener.onTargetItemClick(item);
                 }
 
             });
@@ -124,72 +124,4 @@ public class TargetListAdapter extends RecyclerView.Adapter<TargetListAdapter.My
             });
         }
     }
-
-
-//    public void deleteChat(final Target item, final int position) {
-//
-//        String url = Config.BASE_URL + "";
-//
-//            final ProgressDialog pDialog = new ProgressDialog(context);
-//            pDialog.setMessage("Deleting target...");
-//            pDialog.setCancelable(false);
-//            pDialog.setCanceledOnTouchOutside(false);
-//            pDialog.show();
-//
-//            StringRequest request = new StringRequest(Request.Method.POST, url,
-//                    new Response.Listener<String>() {
-//                        @Override
-//                        public void onResponse(String response) {
-//                            try {
-//                                JSONObject jsonObject = new JSONObject(response);
-//                                boolean error = jsonObject.getBoolean("error");
-//                                if (error == false){
-//                                    removeAt(position);
-//                                }else{
-//                                    Toast.makeText(context,"Unable to delete target please try agian",Toast.LENGTH_SHORT).show();
-//                                }
-//                                pDialog.dismiss();
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                                pDialog.dismiss();
-//                            }
-//                        }
-//                    },
-//                    new Response.ErrorListener() {
-//                        @Override
-//                        public void onErrorResponse(VolleyError error) {
-//                            Config.errorResponse(error, context);
-//                            error.printStackTrace();
-//                            pDialog.dismiss();
-//                        }
-//                    }) {
-//
-//                @Override
-//                protected Map<String, String> getParams() {
-//                    Map<String, String> params = new HashMap<String, String>();
-//                    params.put("from_user_id", sessionManager.getUserID());
-////                    params.put("to_user_id", item.getId());
-//
-//
-//                    return params;
-//                }
-//
-//                @Override
-//                public String getBodyContentType() {
-//                    return "application/x-www-form-urlencoded; charset=UTF-8";
-//                }
-//
-//                @Override
-//                public Map<String, String> getHeaders() {
-//                    Map<String, String> mHeaders = new android.util.ArrayMap<String, String>();
-//                    mHeaders.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-//                    mHeaders.put("Accept", "application/json");
-//                    return mHeaders;
-//                }
-//
-//            };
-//            RequestQueue requestQueue = Volley.newRequestQueue(context);
-//            requestQueue.add(request);
-//    }
-
 }

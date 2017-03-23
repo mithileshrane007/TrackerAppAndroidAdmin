@@ -5,19 +5,6 @@
     android:background="#ffffff"
     android:orientation="vertical">
 
-
-    <TextView
-        android:id="@+id/tvDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="10dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="4dp"
-        android:paddingTop="8dp"
-        android:text="Description"
-        android:textColor="#ffffff"
-        android:textSize="14dp" />
-
     <TextView
         android:id="@+id/tvTime"
         android:layout_width="250dp"

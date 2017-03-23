@@ -1,36 +1,62 @@
 package com.example.infiny.tracker_master.Activities;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.ArrayMap;
 import android.view.View;
-import android.widget.TextView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.example.infiny.tracker_master.Helpers.Config;
+import com.example.infiny.tracker_master.Helpers.ErrorVolleyHandler;
+import com.example.infiny.tracker_master.Helpers.SessionManager;
+import com.example.infiny.tracker_master.Models.LogCoordinates;
 import com.example.infiny.tracker_master.R;
+import com.example.infiny.tracker_master.TrackerMaster;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    MarkerOptions markers[] = new MarkerOptions[10];
-
+    SessionManager sessionManager;
+    ArrayList<LogCoordinates> coordinatesArrayList;
+    LatLngBounds.Builder markerBoundsBuilder;
+    LatLngBounds latLngBounds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        sessionManager = new SessionManager(this);
+        coordinatesArrayList = new ArrayList<>();
+        markerBoundsBuilder= new LatLngBounds.Builder();
+
+        getCoordinates();
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
     }
 
 
@@ -46,44 +72,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom((new LatLng(19.063959, 72.997155)), 12);
-        mMap.animateCamera(cameraUpdate);
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+
+//        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom((new LatLng(19.063959, 72.997155)), 12);
+//        mMap.animateCamera(cameraUpdate);
 
         // Instantiates a new Polyline object and adds points to define a rectangle
-        PolylineOptions rectOptions = new PolylineOptions()
-                .add(new LatLng(19.056954, 73.003602))
-                .add(new LatLng(19.058232, 73.003805))  // North of the previous point, but at the same longitude
-                .add(new LatLng(19.061413, 73.002444))  // Same latitude, and 30km to the west
-                .add(new LatLng(19.063482, 72.999215))
-                .add(new LatLng(19.063959, 72.997155))
-                .add(new LatLng(19.065241, 72.996033))
-                .add(new LatLng(19.065577, 72.997915))
-                .add(new LatLng(19.065726, 72.998836))
-                .add(new LatLng(19.065609, 73.000071))
-                .add(new LatLng(19.064798, 73.002269));  // Same longitude, and 16km to the south
-//                .add(new LatLng(37.35, -122.0)); // Closes the polyline.
+        PolylineOptions rectOptions = new PolylineOptions();
+        for (int i =0;i<coordinatesArrayList.size();i++){
+            markerBoundsBuilder.include(new LatLng(Double.parseDouble(coordinatesArrayList.get(i).getLatitude()), Double.parseDouble(coordinatesArrayList.get(i).getLongitude())));
+            rectOptions.add(new LatLng(Double.parseDouble(coordinatesArrayList.get(i).getLatitude()), Double.parseDouble(coordinatesArrayList.get(i).getLongitude())));
+            mMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(coordinatesArrayList.get(i).getLatitude()), Double.parseDouble(coordinatesArrayList.get(i).getLongitude()))).title("Time : "+coordinatesArrayList.get(i).getTime()));
+        }
 
-        MarkerOptions m1 = new MarkerOptions().position(new LatLng(19.056954, 73.003602));
-        MarkerOptions m2 = new MarkerOptions().position(new LatLng(19.058232, 73.003805));
-        MarkerOptions m3 = new MarkerOptions().position(new LatLng(19.061413, 73.002444));
-        MarkerOptions m4 = new MarkerOptions().position(new LatLng(19.063482, 72.999215));
-        MarkerOptions m5 = new MarkerOptions().position(new LatLng(19.063959, 72.997155));
-        MarkerOptions m6 = new MarkerOptions().position(new LatLng(19.065241, 72.996033));
-        MarkerOptions m7 = new MarkerOptions().position(new LatLng(19.065577, 72.997915));
-        MarkerOptions m8 = new MarkerOptions().position(new LatLng(19.065726, 72.998836));
-        MarkerOptions m9 = new MarkerOptions().position(new LatLng(19.065609, 73.000071));
-        MarkerOptions m10 = new MarkerOptions().position(new LatLng(19.064798, 73.002269));
-
-        mMap.addMarker(new MarkerOptions().position(new LatLng(19.056954, 73.003602)));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(19.058232, 73.003805)));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(19.061413, 73.002444)));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(19.063482, 72.999215)));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(19.063959, 72.997155)));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(19.065241, 72.996033)));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(19.065577, 72.997915)));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(19.065726, 72.998836)));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(19.065609, 73.000071)));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(19.064798, 73.002269)));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(markerBoundsBuilder.build(), 10));
 
 // Get back the mutable Polyline
         Polyline polyline = mMap.addPolyline(rectOptions);
@@ -92,47 +94,96 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public boolean onMarkerClick(Marker marker) {
 
-                mMap.setInfoWindowAdapter(new CustomAdapter());
+                mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                    @Override
+                    public View getInfoWindow(Marker marker) {
+                        return null;
+                    }
+
+                    @Override
+                    public View getInfoContents(Marker marker) {
+                        return null;
+                    }
+                });
                 return false;
             }
         });
 
     }
 
-    public class CustomAdapter implements GoogleMap.InfoWindowAdapter {
+    public void getCoordinates(){
+        String url = Config.BASE_URL + "api/v1/getLogswithStatus";
 
-        int titleSize;
+        final ProgressDialog pDialog = new ProgressDialog(this);
+        pDialog.setMessage("Loading...");
+        pDialog.setCancelable(false);
+        pDialog.setCanceledOnTouchOutside(false);
+        pDialog.show();
 
-//        public CustomAdapter(int titleSize) {
-//            this.titleSize = titleSize;
-//        }
+        StringRequest request = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            boolean error = jsonObject.getBoolean("error");
+                            if (!error) {
+                                JSONArray jsonResult = jsonObject.getJSONArray("result");
+                                for (int i = 0; i < jsonResult.length(); i++){
+                                    LogCoordinates logCoordinates = new LogCoordinates();
+                                    logCoordinates.setLatitude(jsonResult.getJSONObject(i).getString("latitude"));
+                                    logCoordinates.setLongitude(jsonResult.getJSONObject(i).getString("longitude"));
+                                    logCoordinates.setTime(jsonResult.getJSONObject(i).getString("time"));
+                                    coordinatesArrayList.add(logCoordinates);
+                                }
+                                SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                                        .findFragmentById(R.id.map);
+                                mapFragment.getMapAsync(MapsActivity.this);
+                                pDialog.dismiss();
+                            } else {
+                                pDialog.dismiss();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        new ErrorVolleyHandler(MapsActivity.this).onErrorResponse(error);
+                        pDialog.dismiss();
+                    }
+                }) {
 
-        @Override
-        public View getInfoWindow(Marker marker) {
-//            final String title = marker.getTitle();
-//            final String vicinity = marker.getSnippet();
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
 
-//            SpannableString styledString = new SpannableString(vicinity);
+                params.put("date", getIntent().getStringExtra("date"));
+                params.put("tracking_id",getApplicationContext().getSharedPreferences("TrackingId", Context.MODE_PRIVATE).getString("TrackingId",null));
 
-//            styledString.setSpan(new StyleSpan(Typeface.BOLD), 0, titleSize, 0);
-//            styledString.setSpan(new RelativeSizeSpan(1.2f), 0, titleSize, 0);
+                return params;
+            }
 
-            View view = getLayoutInflater().inflate(R.layout.marker_info, null);
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded; charset=UTF-8";
+            }
 
-            TextView tvDescription = (TextView) view.findViewById(R.id.tvDescription);
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> mHeaders = new ArrayMap<String, String>();
+                mHeaders.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                mHeaders.put("Accept", "application/json");
+                mHeaders.put("token",sessionManager.getAuth_token());
+                return mHeaders;
+            }
+        };
 
-            TextView tvTime = (TextView) view.findViewById(R.id.tvTime);
-
-//            tvDescription.setText(title);
-//            tvTime.setText(styledString);
-
-            return view;
-
-        }
-
-        @Override
-        public View getInfoContents(Marker marker) {
-            return null;
-        }
+//        request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        TrackerMaster.getInstance().addToRequestQueue(request);
     }
+
 }

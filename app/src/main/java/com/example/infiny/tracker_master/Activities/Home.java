@@ -33,6 +33,7 @@ import com.example.infiny.tracker_master.Helpers.ConnectivityReceiver;
 import com.example.infiny.tracker_master.Helpers.ErrorVolleyHandler;
 import com.example.infiny.tracker_master.Helpers.SessionManager;
 import com.example.infiny.tracker_master.Interfaces.OnItemClickListener;
+import com.example.infiny.tracker_master.Models.LogHours;
 import com.example.infiny.tracker_master.Models.Target;
 import com.example.infiny.tracker_master.R;
 import com.example.infiny.tracker_master.TrackerMaster;
@@ -81,10 +82,15 @@ public class Home extends AppCompatActivity {
 
         targetListAdapter = new TargetListAdapter(this, targetList, new OnItemClickListener() {
             @Override
-            public void onChatItemClick(Target targetItem) {
+            public void onTargetItemClick(Target targetItem) {
                 Intent intent = new Intent(Home.this, TargetDetails.class);
                 intent.putExtra("target", targetItem);
                 startActivity(intent);
+            }
+
+            @Override
+            public void onReportItemClick(LogHours ReportItem) {
+
             }
         });
 

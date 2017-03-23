@@ -3,7 +3,9 @@ package com.example.infiny.tracker_master.Fragments;
 import android.app.DatePickerDialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -27,9 +29,11 @@ import com.android.volley.toolbox.StringRequest;
 import com.example.infiny.tracker_master.Activities.AddTarget;
 import com.example.infiny.tracker_master.Activities.Home;
 import com.example.infiny.tracker_master.Activities.MapsActivity;
+import com.example.infiny.tracker_master.Activities.Reports;
 import com.example.infiny.tracker_master.Helpers.Config;
 import com.example.infiny.tracker_master.Helpers.ErrorVolleyHandler;
 import com.example.infiny.tracker_master.Helpers.SessionManager;
+import com.example.infiny.tracker_master.Models.LogHours;
 import com.example.infiny.tracker_master.R;
 import com.example.infiny.tracker_master.TrackerMaster;
 
@@ -37,6 +41,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,8 +58,7 @@ public class DateDialogFragment extends DialogFragment {
     private Calendar newDate, newDate1;
     private SimpleDateFormat dateFormatter;
     int status;
-    SessionManager sessionManager;
-    SparseArray<String> logDataArray;
+
 
 
     @Nullable
@@ -63,12 +67,10 @@ public class DateDialogFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.date_select_fragment, container, false);
         getDialog().setTitle("Please select dates");
 
-        logDataArray = new SparseArray<>();
-        sessionManager = new SessionManager(getActivity());
         tvFromDate = (TextView) view.findViewById(R.id.tvFromDate);
         tvToDate = (TextView) view.findViewById(R.id.tvToDate);
         btSubmit = (Button) view.findViewById(R.id.btSubmit);
-        dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+        dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
         tvFromDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,7 +123,10 @@ public class DateDialogFragment extends DialogFragment {
             public void onClick(View v) {
                 checkForm();
                 if (status == 0) {
-                    startActivity(new Intent(getActivity(),MapsActivity.class));
+                    Intent intent = new Intent(getActivity(),Reports.class);
+                    intent.putExtra("fromDate",tvFromDate.getText().toString().toLowerCase().trim());
+                    intent.putExtra("toDate",tvToDate.getText().toString().trim());
+                    startActivity(intent);
                     getDialog().dismiss();
                 }
             }
@@ -144,75 +149,5 @@ public class DateDialogFragment extends DialogFragment {
             tvToDate.setHintTextColor(Color.RED);
             status = 1;
         }
-    }
-
-    public void getReport(){
-        String url = Config.BASE_URL + "api/v1/getLogswithDate";
-
-        final ProgressDialog pDialog = new ProgressDialog(getActivity());
-        pDialog.setMessage("Loading...");
-        pDialog.setCancelable(false);
-        pDialog.setCanceledOnTouchOutside(false);
-        pDialog.show();
-
-        StringRequest request = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            boolean error = jsonObject.getBoolean("error");
-                            if (!error) {
-                                JSONArray jsonResult = jsonObject.getJSONArray("result");
-                                for (int i = 0; i < jsonResult.length(); i++){
-//                                    logDataArray.append(jsonResult.getJSONObject(i).get(""));
-                                }
-                                    pDialog.dismiss();
-                            } else {
-                                pDialog.dismiss();
-                            }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                        new ErrorVolleyHandler(getActivity()).onErrorResponse(error);
-                        pDialog.dismiss();
-                    }
-                }) {
-
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-
-                params.put("start_date", tvFromDate.getText().toString().toLowerCase().trim());
-                params.put("end_date", tvToDate.getText().toString().trim());
-                params.put("tracking_id","");
-
-                return params;
-            }
-
-            @Override
-            public String getBodyContentType() {
-                return "application/x-www-form-urlencoded; charset=UTF-8";
-            }
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> mHeaders = new ArrayMap<String, String>();
-                mHeaders.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-                mHeaders.put("Accept", "application/json");
-                mHeaders.put("token",sessionManager.getAuth_token());
-                return mHeaders;
-            }
-        };
-
-        request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        TrackerMaster.getInstance().addToRequestQueue(request);
     }
 }

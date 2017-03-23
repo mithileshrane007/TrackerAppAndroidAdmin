@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="4dp">
 
     <RelativeLayout
+        android:id="@+id/rel_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -13,22 +15,25 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="86dp"
+            android:layout_marginLeft="24dp"
             android:gravity="center"
             android:padding="16dp"
-            android:text="1 January 2017" />
+            android:text="1 January 2017"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <TextView
             android:id="@+id/tvHours"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginStart="57dp"
-            android:layout_toEndOf="@+id/tvDate"
+            android:layout_marginRight="24dp"
             android:background="@drawable/drawable_online"
             android:gravity="center"
             android:padding="4dp"
-            android:text="23.00 hr"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:text="23.00 hrs."
             android:textColor="#ffffff" />
     </RelativeLayout>
 

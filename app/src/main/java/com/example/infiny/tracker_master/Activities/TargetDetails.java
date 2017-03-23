@@ -1,9 +1,8 @@
 package com.example.infiny.tracker_master.Activities;
 
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -17,12 +16,17 @@ import com.example.infiny.tracker_master.Models.Target;
 import com.example.infiny.tracker_master.R;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class TargetDetails extends AppCompatActivity {
 
     private TextView tvFirstName,tvLastName,tvEmail,tvPhone;
     private TextView tvReports;
     Target target;
     ImageView ivBackground, ivProfileImage;
+    SharedPreferences prefTrackingId;
+    SharedPreferences.Editor editorTrackingId;
 
 
     @Override
@@ -47,6 +51,9 @@ public class TargetDetails extends AppCompatActivity {
 
         target = (Target) getIntent().getSerializableExtra("target");
 
+        prefTrackingId = this.getSharedPreferences("TrackingId", MODE_PRIVATE);
+        prefTrackingId.edit().putString("TrackingId",target.getTrackingId()).apply();
+
         tvFirstName.setText(target.getFirstName());
         tvLastName.setText(target.getLastName());
         tvEmail.setText(target.getEmail());
@@ -66,7 +73,9 @@ public class TargetDetails extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(target.getIsOnline()){
-                    startActivity(new Intent(TargetDetails.this,MapsActivity.class));
+                    Intent intent = new Intent(TargetDetails.this,MapsActivity.class);
+                    intent.putExtra("date",new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
+                    startActivity(intent);
                 }else{
                     new DateDialogFragment().show(getFragmentManager(), "Please select dates");
                 }
