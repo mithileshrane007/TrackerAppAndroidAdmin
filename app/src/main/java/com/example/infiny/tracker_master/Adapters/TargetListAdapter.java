@@ -7,6 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -24,14 +26,17 @@ import java.util.ArrayList;
  * Created by infiny on 9/3/17.
  */
 
-public class TargetListAdapter extends RecyclerView.Adapter<TargetListAdapter.MyViewHolder>  {
+public class TargetListAdapter extends RecyclerView.Adapter<TargetListAdapter.MyViewHolder> implements Filterable {
     private ArrayList<Target> targetList;
+    public ArrayList<Target> filteredList;
+    CustomFilter mFilter;
     Context context;
     private final OnItemClickListener listener;
     SessionManager sessionManager;
 
     public TargetListAdapter(Context context, ArrayList<Target> targetList, OnItemClickListener listener) {
         this.targetList = targetList;
+        mFilter = new CustomFilter(TargetListAdapter.this);
         this.context = context;
         this.listener = listener;
         sessionManager = new SessionManager(context);
@@ -73,6 +78,11 @@ public class TargetListAdapter extends RecyclerView.Adapter<TargetListAdapter.My
     @Override
     public int getItemCount() {
         return targetList.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return mFilter;
     }
 
 
@@ -122,6 +132,38 @@ public class TargetListAdapter extends RecyclerView.Adapter<TargetListAdapter.My
                     return false;
                 }
             });
+        }
+    }
+
+    public class CustomFilter extends Filter {
+        private TargetListAdapter mAdapter;
+        private CustomFilter(TargetListAdapter mAdapter) {
+            super();
+            this.mAdapter = mAdapter;
+        }
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            filteredList.clear();
+            final FilterResults results = new FilterResults();
+            if (constraint.length() == 0) {
+                filteredList.addAll(targetList);
+            } else {
+                final String filterPattern = constraint.toString().toLowerCase().trim();
+                for (final Target mWords : targetList) {
+                    if ((mWords.getFirstName()+" "+mWords.getLastName()).toLowerCase().startsWith(filterPattern)) {
+                        filteredList.add(mWords);
+                    }
+                }
+            }
+            System.out.println("Count Number " + filteredList.size());
+            results.values = filteredList;
+            results.count = filteredList.size();
+            return results;
+        }
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            System.out.println("Count Number 2 " + ((ArrayList<Target>) results.values).size());
+            this.mAdapter.notifyDataSetChanged();
         }
     }
 }

@@ -15,6 +15,11 @@ android {
         vectorDrawables.useSupportLibrary = true
 
     }
+
+    dexOptions {
+        maxProcessCount 4 // this is the default value
+        javaMaxHeapSize "4g"
+    }
     buildTypes {
         release {
             minifyEnabled false

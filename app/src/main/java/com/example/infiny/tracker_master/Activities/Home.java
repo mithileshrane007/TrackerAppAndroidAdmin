@@ -118,6 +118,29 @@ public class Home extends AppCompatActivity {
                 })
                 .show();
 
+//        searchView.clearFocus();
+//        searchView.setIconifiedByDefault(false);
+//
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                targetListAdapter.getFilter().filter(query);
+//
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                try {
+//                    targetListAdapter.getFilter().filter(newText);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+//                return true;
+//            }
+//        });
+
     }
 
     @Override
@@ -151,13 +174,11 @@ public class Home extends AppCompatActivity {
                 .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
                     @Override
                     public void onHidePrompt(MotionEvent event, boolean tappedTarget) {
-
                     }
 
                     @Override
                     public void onHidePromptComplete() {
                         getTargets();
-
                     }
                 })
                 .show();

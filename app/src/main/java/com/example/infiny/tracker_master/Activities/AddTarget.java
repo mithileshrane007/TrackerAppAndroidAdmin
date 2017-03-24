@@ -378,7 +378,12 @@ public class AddTarget extends AppCompatActivity {
                 params.put("last_name", lastName.getEditText().getText().toString().trim());
                 params.put("track_time_interval", timeInterval.getEditText().getText().toString().trim());
                 params.put("track_time_out", timeOut.getEditText().getText().toString().trim());
-                params.put("image", convertToBase64(profileImage));
+
+                if(uriSavedImage == null){
+                    params.put("image", String.valueOf(" "));
+                }else{
+                    params.put("image", Config.convertToBase64(uriSavedImage,AddTarget.this));
+                }
 
                 return params;
             }
@@ -452,54 +457,16 @@ public class AddTarget extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
                 try {
-                    ivProfilePic.setImageBitmap(getBitmapFromUri(data.getData(),AddTarget.this));
-                    profileImage = getBitmapFromUri(data.getData(),AddTarget.this);
+                    ivProfilePic.setImageBitmap(Config.getBitmapFromUri(data.getData(),AddTarget.this));
+                    uriSavedImage = data.getData();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
 
             if (requestCode == CAMERA_REQUEST) {
-                ivProfilePic.setImageBitmap(getBitmapFromUri(uriSavedImage,AddTarget.this));
-                profileImage = getBitmapFromUri(uriSavedImage,AddTarget.this);
-            }
-        }
-    }
-
-    public static String convertToBase64(Bitmap bitmap) {
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
-
-        byte[] byteArrayImage = baos.toByteArray();
-
-        String encodedImage = Base64.encodeToString(byteArrayImage, Base64.DEFAULT);
-
-        return encodedImage;
-
-    }
-
-    public static Bitmap getBitmapFromUri(Uri uri, Context context) {
-        ParcelFileDescriptor parcelFileDescriptor = null;
-        try {
-            parcelFileDescriptor = context.getContentResolver().openFileDescriptor(uri, "r");
-            FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-            Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-            Bitmap bitmap = ExifUtils.rotateBitmap(ExifUtils.getPath(context, uri), image);
-            parcelFileDescriptor.close();
-            return bitmap;
-        } catch (Exception e) {
-            Log.e("Ex", "Failed to load image.", e);
-            return null;
-        } finally {
-            try {
-                if (parcelFileDescriptor != null) {
-                    parcelFileDescriptor.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.e("IOEx", "Error closing ParcelFile Descriptor");
+                Bitmap bitmap = Config.getBitmapFromUri(uriSavedImage,AddTarget.this);
+                ivProfilePic.setImageBitmap(bitmap);
             }
         }
     }

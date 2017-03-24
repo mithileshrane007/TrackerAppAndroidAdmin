@@ -16,6 +16,8 @@ import com.example.infiny.tracker_master.R;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by infiny on 22/3/17.
@@ -46,19 +48,27 @@ public class ReportListAdapter extends RecyclerView.Adapter<ReportListAdapter.My
     public void onBindViewHolder(final ReportListAdapter.MyViewHolder holder, int position) {
         LogHours data = logHourList.get(position);
 
-        SimpleDateFormat orgDate = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat formDate = new SimpleDateFormat("dd MMMM yyyy");
+        String[] split = data.getHours().split(":");
+
+        String hr,min;
+
+        if(Integer.valueOf(split[0]) > 1 && Integer.valueOf(split[1]) > 1 ){
+            holder.tvHours.setText(split[0]+ " Hours "+split[1]+" Minutes");
+        } else if(Integer.valueOf(split[0]) <= 1 && Integer.valueOf(split[1]) > 1 ){
+            holder.tvHours.setText(split[0]+ " Hour "+split[1]+" Minutes");
+        } else if(Integer.valueOf(split[0]) <= 1 && Integer.valueOf(split[1]) <= 1 ){
+            holder.tvHours.setText(split[0]+ " Hour "+split[1]+" Minute");
+        } else if(Integer.valueOf(split[0]) > 1 && Integer.valueOf(split[1]) <= 1 ){
+            holder.tvHours.setText(split[0]+ " Hours "+split[1]+" Minute");
+        }
+
 
         try {
-            holder.tvDate.setText(formDate.format(orgDate.parse(data.getDate())));
+            holder.tvDate.setText(new SimpleDateFormat("dd MMMM yyyy").format(new SimpleDateFormat("yyyy-MM-dd").parse(data.getDate())));
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (Double.parseDouble(data.getHours()) > 1) {
-            holder.tvHours.setText(data.getHours() + " hrs.");
-        } else {
-            holder.tvHours.setText(data.getHours() + " hr.");
-        }
+
 
         holder.bind(logHourList.get(position), listener);
 

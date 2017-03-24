@@ -24,6 +24,7 @@
             android:background="@drawable/rounded_edittext"
             android:drawableLeft="@android:drawable/ic_menu_search"
             android:padding="10dp" />
+
     </RelativeLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout

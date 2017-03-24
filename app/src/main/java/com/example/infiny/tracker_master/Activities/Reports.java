@@ -12,15 +12,15 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.ArrayMap;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.infiny.tracker_master.Adapters.ReportListAdapter;
-import com.example.infiny.tracker_master.Adapters.TargetListAdapter;
 import com.example.infiny.tracker_master.Helpers.Config;
 import com.example.infiny.tracker_master.Helpers.ErrorVolleyHandler;
 import com.example.infiny.tracker_master.Helpers.SessionManager;
@@ -44,8 +44,9 @@ public class Reports extends AppCompatActivity {
     private LinearLayoutManager mLayoutManager;
     ArrayList<LogHours> logHourData;
     SessionManager sessionManager;
-    ArrayList<LogHours>  dataArray;
+    ArrayList<LogHours> dataArray;
     SharedPreferences prefTrackingId;
+    TextView tvNoData;
 
 
     @Override
@@ -61,10 +62,12 @@ public class Reports extends AppCompatActivity {
 
         dataArray = new ArrayList<>();
         sessionManager = new SessionManager(this);
+        tvNoData = (TextView) findViewById(R.id.tvNoData);
         rvReportList = (RecyclerView) findViewById(R.id.rvLogHourList);
 
+        getReport();
 
-        reportListAdapter = new ReportListAdapter(this, dataArray , new OnItemClickListener() {
+        reportListAdapter = new ReportListAdapter(this, dataArray, new OnItemClickListener() {
             @Override
             public void onTargetItemClick(Target targetItem) {
 
@@ -84,8 +87,6 @@ public class Reports extends AppCompatActivity {
         rvReportList.setHasFixedSize(true);
         rvReportList.setAdapter(reportListAdapter);
 
-        getReport();
-
     }
 
     @Override
@@ -101,7 +102,7 @@ public class Reports extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    public void getReport(){
+    public void getReport() {
         String url = Config.BASE_URL + "api/v1/getLogswithDate";
 
         final ProgressDialog pDialog = new ProgressDialog(this);
@@ -119,13 +120,16 @@ public class Reports extends AppCompatActivity {
                             boolean error = jsonObject.getBoolean("error");
                             if (!error) {
                                 JSONArray jsonResult = jsonObject.getJSONArray("result");
-                                for (int i = 0; i < jsonResult.length(); i++){
-                                    LogHours logHours = new LogHours();
-                                    logHours.setDate(jsonResult.getJSONObject(i).getString("date"));
-                                    logHours.setHours(jsonResult.getJSONObject(i).getString("log_hour"));
-                                    dataArray.add(logHours);
-                                    reportListAdapter.notifyDataSetChanged();
-
+                                if (jsonResult.length() == 0) {
+                                    tvNoData.setVisibility(View.VISIBLE);
+                                } else {
+                                    for (int i = 0; i < jsonResult.length(); i++) {
+                                        LogHours logHours = new LogHours();
+                                        logHours.setDate(jsonResult.getJSONObject(i).getString("date"));
+                                        logHours.setHours(jsonResult.getJSONObject(i).getString("log_hour"));
+                                        dataArray.add(logHours);
+                                        reportListAdapter.notifyDataSetChanged();
+                                    }
                                 }
                                 pDialog.dismiss();
                             } else {
@@ -151,7 +155,7 @@ public class Reports extends AppCompatActivity {
 
                 params.put("start_date", getIntent().getStringExtra("fromDate"));
                 params.put("end_date", getIntent().getStringExtra("toDate"));
-                params.put("tracking_id",getApplicationContext().getSharedPreferences("TrackingId", Context.MODE_PRIVATE).getString("TrackingId",null));
+                params.put("tracking_id", getApplicationContext().getSharedPreferences("TrackingId", Context.MODE_PRIVATE).getString("TrackingId", null));
 
                 return params;
             }
@@ -166,7 +170,7 @@ public class Reports extends AppCompatActivity {
                 Map<String, String> mHeaders = new ArrayMap<String, String>();
                 mHeaders.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
                 mHeaders.put("Accept", "application/json");
-                mHeaders.put("token",sessionManager.getAuth_token());
+                mHeaders.put("token", sessionManager.getAuth_token());
                 return mHeaders;
             }
         };

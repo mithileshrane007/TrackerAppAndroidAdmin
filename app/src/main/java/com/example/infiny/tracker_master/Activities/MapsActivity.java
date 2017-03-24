@@ -18,7 +18,6 @@ import com.example.infiny.tracker_master.Helpers.SessionManager;
 import com.example.infiny.tracker_master.Models.LogCoordinates;
 import com.example.infiny.tracker_master.R;
 import com.example.infiny.tracker_master.TrackerMaster;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -52,7 +51,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         sessionManager = new SessionManager(this);
         coordinatesArrayList = new ArrayList<>();
-        markerBoundsBuilder= new LatLngBounds.Builder();
+        markerBoundsBuilder = new LatLngBounds.Builder();
 
         getCoordinates();
 
@@ -74,18 +73,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         mMap.getUiSettings().setMapToolbarEnabled(false);
 
-//        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom((new LatLng(19.063959, 72.997155)), 12);
-//        mMap.animateCamera(cameraUpdate);
-
         // Instantiates a new Polyline object and adds points to define a rectangle
         PolylineOptions rectOptions = new PolylineOptions();
-        for (int i =0;i<coordinatesArrayList.size();i++){
+        for (int i = 0; i < coordinatesArrayList.size(); i++) {
             markerBoundsBuilder.include(new LatLng(Double.parseDouble(coordinatesArrayList.get(i).getLatitude()), Double.parseDouble(coordinatesArrayList.get(i).getLongitude())));
             rectOptions.add(new LatLng(Double.parseDouble(coordinatesArrayList.get(i).getLatitude()), Double.parseDouble(coordinatesArrayList.get(i).getLongitude())));
-            mMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(coordinatesArrayList.get(i).getLatitude()), Double.parseDouble(coordinatesArrayList.get(i).getLongitude()))).title("Time : "+coordinatesArrayList.get(i).getTime()));
+            mMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(coordinatesArrayList.get(i).getLatitude()), Double.parseDouble(coordinatesArrayList.get(i).getLongitude()))).title("Time : " + coordinatesArrayList.get(i).getTime()));
         }
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(markerBoundsBuilder.build(), 10));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(markerBoundsBuilder.build(), 14));
 
 // Get back the mutable Polyline
         Polyline polyline = mMap.addPolyline(rectOptions);
@@ -111,7 +107,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    public void getCoordinates(){
+    public void getCoordinates() {
         String url = Config.BASE_URL + "api/v1/getLogswithStatus";
 
         final ProgressDialog pDialog = new ProgressDialog(this);
@@ -129,7 +125,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             boolean error = jsonObject.getBoolean("error");
                             if (!error) {
                                 JSONArray jsonResult = jsonObject.getJSONArray("result");
-                                for (int i = 0; i < jsonResult.length(); i++){
+                                for (int i = 0; i < jsonResult.length(); i++) {
                                     LogCoordinates logCoordinates = new LogCoordinates();
                                     logCoordinates.setLatitude(jsonResult.getJSONObject(i).getString("latitude"));
                                     logCoordinates.setLongitude(jsonResult.getJSONObject(i).getString("longitude"));
@@ -162,7 +158,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Map<String, String> params = new HashMap<String, String>();
 
                 params.put("date", getIntent().getStringExtra("date"));
-                params.put("tracking_id",getApplicationContext().getSharedPreferences("TrackingId", Context.MODE_PRIVATE).getString("TrackingId",null));
+                params.put("tracking_id", getApplicationContext().getSharedPreferences("TrackingId", Context.MODE_PRIVATE).getString("TrackingId", null));
 
                 return params;
             }
@@ -177,7 +173,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Map<String, String> mHeaders = new ArrayMap<String, String>();
                 mHeaders.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
                 mHeaders.put("Accept", "application/json");
-                mHeaders.put("token",sessionManager.getAuth_token());
+                mHeaders.put("token", sessionManager.getAuth_token());
                 return mHeaders;
             }
         };
