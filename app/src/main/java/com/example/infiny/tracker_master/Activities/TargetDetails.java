@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.infiny.tracker_master.Fragments.DateDialogFragment;
@@ -27,6 +28,7 @@ public class TargetDetails extends AppCompatActivity {
     ImageView ivBackground, ivProfileImage;
     SharedPreferences prefTrackingId;
     SharedPreferences.Editor editorTrackingId;
+    RelativeLayout rlReports;
 
 
     @Override
@@ -48,6 +50,7 @@ public class TargetDetails extends AppCompatActivity {
         tvReports = (TextView) findViewById(R.id.tvReports);
         ivBackground = (ImageView) findViewById(R.id.ivBackground);
         ivProfileImage = (ImageView) findViewById(R.id.ivProfileImage);
+        rlReports = (RelativeLayout) findViewById(R.id.rlReports);
 
         target = (Target) getIntent().getSerializableExtra("target");
 
@@ -69,7 +72,7 @@ public class TargetDetails extends AppCompatActivity {
                 .placeholder(R.drawable.ic_person_36dp)
                 .into(ivProfileImage);
 
-        tvReports.setOnClickListener(new View.OnClickListener() {
+        rlReports.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(target.getIsOnline()){

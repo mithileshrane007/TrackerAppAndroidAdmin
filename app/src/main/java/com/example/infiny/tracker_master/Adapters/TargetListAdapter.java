@@ -26,17 +26,17 @@ import java.util.ArrayList;
  * Created by infiny on 9/3/17.
  */
 
-public class TargetListAdapter extends RecyclerView.Adapter<TargetListAdapter.MyViewHolder> implements Filterable {
-    private ArrayList<Target> targetList;
-    public ArrayList<Target> filteredList;
-    CustomFilter mFilter;
+public class TargetListAdapter extends RecyclerView.Adapter<TargetListAdapter.MyViewHolder> implements Filterable{
+    public ArrayList<Target> targetList;
+    public ArrayList<Target> filterList;
+    FilterAdapter filter;
     Context context;
     private final OnItemClickListener listener;
     SessionManager sessionManager;
 
     public TargetListAdapter(Context context, ArrayList<Target> targetList, OnItemClickListener listener) {
         this.targetList = targetList;
-        mFilter = new CustomFilter(TargetListAdapter.this);
+        this.filterList =targetList;
         this.context = context;
         this.listener = listener;
         sessionManager = new SessionManager(context);
@@ -56,7 +56,7 @@ public class TargetListAdapter extends RecyclerView.Adapter<TargetListAdapter.My
 
         holder.bind(targetList.get(position), listener);
 
-        if(targetData.getIsOnline()){
+        if (targetData.getIsOnline()) {
             holder.ivOnline.setVisibility(View.VISIBLE);
         }
 
@@ -64,7 +64,7 @@ public class TargetListAdapter extends RecyclerView.Adapter<TargetListAdapter.My
                 .load(Config.BASE_URL + targetData.getProfilePic())
                 .placeholder(R.drawable.ic_person_36dp)
                 .into(holder.ivProfPic);
-        holder.tvName.setText(targetData.getFirstName()+" "+targetData.getLastName());
+        holder.tvName.setText(targetData.getFirstName() + " " + targetData.getLastName());
         holder.tvEmail.setText(targetData.getEmail());
 
     }
@@ -82,13 +82,16 @@ public class TargetListAdapter extends RecyclerView.Adapter<TargetListAdapter.My
 
     @Override
     public Filter getFilter() {
-        return mFilter;
+        if(filter==null){
+            filter=new FilterAdapter(filterList,this);
+        }
+        return filter;
     }
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         ////implements View.OnCreateContextMenuListener
-        ImageView ivProfPic,ivOnline;
+        ImageView ivProfPic, ivOnline;
         TextView tvName, tvEmail;
         RelativeLayout relativeLayout;
         View seperator;
@@ -135,35 +138,4 @@ public class TargetListAdapter extends RecyclerView.Adapter<TargetListAdapter.My
         }
     }
 
-    public class CustomFilter extends Filter {
-        private TargetListAdapter mAdapter;
-        private CustomFilter(TargetListAdapter mAdapter) {
-            super();
-            this.mAdapter = mAdapter;
-        }
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            filteredList.clear();
-            final FilterResults results = new FilterResults();
-            if (constraint.length() == 0) {
-                filteredList.addAll(targetList);
-            } else {
-                final String filterPattern = constraint.toString().toLowerCase().trim();
-                for (final Target mWords : targetList) {
-                    if ((mWords.getFirstName()+" "+mWords.getLastName()).toLowerCase().startsWith(filterPattern)) {
-                        filteredList.add(mWords);
-                    }
-                }
-            }
-            System.out.println("Count Number " + filteredList.size());
-            results.values = filteredList;
-            results.count = filteredList.size();
-            return results;
-        }
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            System.out.println("Count Number 2 " + ((ArrayList<Target>) results.values).size());
-            this.mAdapter.notifyDataSetChanged();
-        }
-    }
 }

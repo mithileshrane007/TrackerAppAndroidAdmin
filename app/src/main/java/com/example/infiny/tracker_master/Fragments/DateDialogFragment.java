@@ -60,13 +60,12 @@ public class DateDialogFragment extends DialogFragment {
     int status;
 
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.date_select_fragment, container, false);
         getDialog().setTitle("Please select dates");
 
+        View view = inflater.inflate(R.layout.date_select_fragment, container, false);
         tvFromDate = (TextView) view.findViewById(R.id.tvFromDate);
         tvToDate = (TextView) view.findViewById(R.id.tvToDate);
         btSubmit = (Button) view.findViewById(R.id.btSubmit);

@@ -81,7 +81,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(coordinatesArrayList.get(i).getLatitude()), Double.parseDouble(coordinatesArrayList.get(i).getLongitude()))).title("Time : " + coordinatesArrayList.get(i).getTime()));
         }
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(markerBoundsBuilder.build(), 14));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(markerBoundsBuilder.build(), 100));
 
 // Get back the mutable Polyline
         Polyline polyline = mMap.addPolyline(rectOptions);

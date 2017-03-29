@@ -11,6 +11,7 @@ import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -51,19 +52,19 @@ public class Home extends AppCompatActivity {
     SearchView searchView;
     SessionManager sessionManager;
     MenuItem menuItem;
-    View view;
     ArrayList<Target> targetList;
     RecyclerView rvTargetList;
     TargetListAdapter targetListAdapter;
     private LinearLayoutManager mLayoutManager;
     SwipeRefreshLayout swipeRefreshLayout;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         sessionManager = new SessionManager(this);
@@ -113,59 +114,70 @@ public class Home extends AppCompatActivity {
 
                     @Override
                     public void onHidePromptComplete() {
-                        showSearchPrompt(view);
+//                        getTargets();
+                        showSearchPrompt();
                     }
                 })
                 .show();
 
-//        searchView.clearFocus();
-//        searchView.setIconifiedByDefault(false);
-//
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                targetListAdapter.getFilter().filter(query);
-//
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                try {
-//                    targetListAdapter.getFilter().filter(newText);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//
-//                return true;
-//            }
-//        });
+        searchView.setFocusable(false);
+        searchView.setIconifiedByDefault(false);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                try {
+                    targetListAdapter.getFilter().filter(newText);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                return true;
+            }
+        });
 
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_home, menu);
-        menuItem = menu.findItem(R.id.add_contact);
-
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-        if (id == R.id.add_contact) {
-            startActivity(new Intent(Home.this, AddTarget.class));
-            return true;
+        switch (id) {
+            case R.id.add_contact:
+                startActivity(new Intent(Home.this, AddTarget.class));
+                break;
+
+            case R.id.logout:
+                startActivity(new Intent(Home.this, Login.class));
+                sessionManager.logoutUser();
+                break;
+
+            default:
+
         }
+
+
         return super.onOptionsItemSelected(item);
     }
 
-    public void showSearchPrompt(View view) {
+    public void showSearchPrompt() {
         new MaterialTapTargetPrompt.Builder(this)
-                .setPrimaryText("Add contacts")
-                .setSecondaryText("")
+                .setPrimaryText("Add targets")
                 .setBackgroundColour(Color.parseColor("#009688"))
                 .setAnimationInterpolator(new FastOutSlowInInterpolator())
                 .setMaxTextWidth(R.dimen.tap_target_menu_max_width)
@@ -182,6 +194,7 @@ public class Home extends AppCompatActivity {
                     }
                 })
                 .show();
+
     }
 
     public void getTargets() {
@@ -301,4 +314,5 @@ public class Home extends AppCompatActivity {
                     }
                 }).setNegativeButton("No", null).show();
     }
+
 }
