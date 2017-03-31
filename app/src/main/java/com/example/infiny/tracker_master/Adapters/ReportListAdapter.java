@@ -53,13 +53,13 @@ public class ReportListAdapter extends RecyclerView.Adapter<ReportListAdapter.My
         String hr,min;
 
         if(Integer.valueOf(split[0]) > 1 && Integer.valueOf(split[1]) > 1 ){
-            holder.tvHours.setText(split[0]+ " Hours "+split[1]+" Minutes");
+            holder.tvHours.setText(split[0]+ " Hrs. "+split[1]+" Mins.");
         } else if(Integer.valueOf(split[0]) <= 1 && Integer.valueOf(split[1]) > 1 ){
-            holder.tvHours.setText(split[0]+ " Hour "+split[1]+" Minutes");
+            holder.tvHours.setText(split[0]+ " Hr. "+split[1]+" Mins.");
         } else if(Integer.valueOf(split[0]) <= 1 && Integer.valueOf(split[1]) <= 1 ){
-            holder.tvHours.setText(split[0]+ " Hour "+split[1]+" Minute");
+            holder.tvHours.setText(split[0]+ " Hr. "+split[1]+" Min.");
         } else if(Integer.valueOf(split[0]) > 1 && Integer.valueOf(split[1]) <= 1 ){
-            holder.tvHours.setText(split[0]+ " Hours "+split[1]+" Minute");
+            holder.tvHours.setText(split[0]+ " Hrs. "+split[1]+" Min.");
         }
 
 

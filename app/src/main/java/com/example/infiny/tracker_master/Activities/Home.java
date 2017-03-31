@@ -11,7 +11,6 @@ import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -77,11 +76,12 @@ public class Home extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(false);
+                targetList.clear();
                 getTargets();
             }
         });
 
-        targetListAdapter = new TargetListAdapter(this, targetList, new OnItemClickListener() {
+        targetListAdapter = new TargetListAdapter(Home.this, targetList, new OnItemClickListener() {
             @Override
             public void onTargetItemClick(Target targetItem) {
                 Intent intent = new Intent(Home.this, TargetDetails.class);
@@ -95,30 +95,35 @@ public class Home extends AppCompatActivity {
             }
         });
 
-        mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        mLayoutManager = new LinearLayoutManager(this);
+        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         rvTargetList.setLayoutManager(mLayoutManager);
-        rvTargetList.setItemAnimator(new DefaultItemAnimator());
+//        rvTargetList.setItemViewCacheSize(0);
         rvTargetList.setHasFixedSize(true);
         rvTargetList.setAdapter(targetListAdapter);
 
-        new MaterialTapTargetPrompt.Builder(Home.this)
-                .setTarget(findViewById(R.id.search_box))
-                .setBackgroundColour(Color.parseColor("#009688"))
-                .setPrimaryText("Here is an interesting feature")
-                .setSecondaryText("Tap here and you will be surprised")
-                .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
-                    @Override
-                    public void onHidePrompt(MotionEvent event, boolean tappedTarget) {
-                        //TODO: Store in SharedPrefs so you don't show this prompt again.
-                    }
+        if (getSharedPreferences("AppFirstRun", 0).getBoolean("firstRun", true)) {
+            new MaterialTapTargetPrompt.Builder(Home.this)
+                    .setTarget(findViewById(R.id.search_box))
+                    .setBackgroundColour(Color.parseColor("#009688"))
+                    .setPrimaryText("Here is an interesting feature")
+                    .setSecondaryText("Tap here and you will be surprised")
+                    .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
+                        @Override
+                        public void onHidePrompt(MotionEvent event, boolean tappedTarget) {
+                            //TODO: Store in SharedPrefs so you don't show this prompt again.
+                        }
 
-                    @Override
-                    public void onHidePromptComplete() {
+                        @Override
+                        public void onHidePromptComplete() {
 //                        getTargets();
-                        showSearchPrompt();
-                    }
-                })
-                .show();
+                            showSearchPrompt();
+                        }
+                    })
+                    .show();
+        }else{
+            getTargets();
+        }
 
         searchView.setFocusable(false);
         searchView.setIconifiedByDefault(false);
@@ -190,6 +195,7 @@ public class Home extends AppCompatActivity {
 
                     @Override
                     public void onHidePromptComplete() {
+                        Home.this.getSharedPreferences("AppFirstRun", 0).edit().putBoolean("firstRun", false).commit();
                         getTargets();
                     }
                 })

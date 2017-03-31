@@ -28,7 +28,7 @@ import java.util.ArrayList;
 
 public class TargetListAdapter extends RecyclerView.Adapter<TargetListAdapter.MyViewHolder> implements Filterable{
     public ArrayList<Target> targetList;
-    public ArrayList<Target> filterList;
+    private ArrayList<Target> filterList;
     FilterAdapter filter;
     Context context;
     private final OnItemClickListener listener;
@@ -54,8 +54,6 @@ public class TargetListAdapter extends RecyclerView.Adapter<TargetListAdapter.My
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         Target targetData = targetList.get(position);
 
-        holder.bind(targetList.get(position), listener);
-
         if (targetData.getIsOnline()) {
             holder.ivOnline.setVisibility(View.VISIBLE);
         }
@@ -63,10 +61,13 @@ public class TargetListAdapter extends RecyclerView.Adapter<TargetListAdapter.My
         Picasso.with(context)
                 .load(Config.BASE_URL + targetData.getProfilePic())
                 .placeholder(R.drawable.ic_person_36dp)
+                .fit()
+                .error(R.drawable.ic_person_36dp)
                 .into(holder.ivProfPic);
         holder.tvName.setText(targetData.getFirstName() + " " + targetData.getLastName());
         holder.tvEmail.setText(targetData.getEmail());
 
+        holder.bind(targetData, listener);
     }
 
     public void removeAt(int position) {
@@ -94,7 +95,6 @@ public class TargetListAdapter extends RecyclerView.Adapter<TargetListAdapter.My
         ImageView ivProfPic, ivOnline;
         TextView tvName, tvEmail;
         RelativeLayout relativeLayout;
-        View seperator;
 
         public MyViewHolder(View view) {
             super(view);

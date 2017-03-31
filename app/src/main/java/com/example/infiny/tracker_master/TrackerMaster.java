@@ -8,8 +8,10 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.crashlytics.android.Crashlytics;
 import com.example.infiny.tracker_master.Helpers.ConnectivityReceiver;
 import com.example.infiny.tracker_master.Helpers.LruBitmapCache;
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by infiny on 24/2/17.
@@ -25,6 +27,7 @@ public class TrackerMaster  extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         mInstance = this;
         // printHashKey();
        // ACRA.init(this);

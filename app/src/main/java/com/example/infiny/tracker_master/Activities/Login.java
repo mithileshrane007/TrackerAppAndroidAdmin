@@ -2,6 +2,7 @@ package com.example.infiny.tracker_master.Activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -57,6 +58,9 @@ public class Login extends AppCompatActivity {
         password = (TextInputLayout) findViewById(R.id.password);
         etEmail = (EditText) findViewById(R.id.etEmail);
         etPassword = (EditText) findViewById(R.id.etPassword);
+
+
+        final SharedPreferences settings = getSharedPreferences("AppFirstRun", 0);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
