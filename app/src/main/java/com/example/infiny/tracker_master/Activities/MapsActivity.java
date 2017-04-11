@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.ArrayMap;
 import android.view.View;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -75,36 +76,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Instantiates a new Polyline object and adds points to define a rectangle
         PolylineOptions rectOptions = new PolylineOptions();
-        for (int i = 0; i < coordinatesArrayList.size(); i++) {
-            markerBoundsBuilder.include(new LatLng(Double.parseDouble(coordinatesArrayList.get(i).getLatitude()), Double.parseDouble(coordinatesArrayList.get(i).getLongitude())));
-            rectOptions.add(new LatLng(Double.parseDouble(coordinatesArrayList.get(i).getLatitude()), Double.parseDouble(coordinatesArrayList.get(i).getLongitude())));
-            mMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(coordinatesArrayList.get(i).getLatitude()), Double.parseDouble(coordinatesArrayList.get(i).getLongitude()))).title("Time : " + coordinatesArrayList.get(i).getTime()));
-        }
+        if(coordinatesArrayList.size()!=0){
+            for (int i = 0; i < coordinatesArrayList.size(); i++) {
+                markerBoundsBuilder.include(new LatLng(Double.parseDouble(coordinatesArrayList.get(i).getLatitude()), Double.parseDouble(coordinatesArrayList.get(i).getLongitude())));
+                rectOptions.add(new LatLng(Double.parseDouble(coordinatesArrayList.get(i).getLatitude()), Double.parseDouble(coordinatesArrayList.get(i).getLongitude())));
+                mMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(coordinatesArrayList.get(i).getLatitude()), Double.parseDouble(coordinatesArrayList.get(i).getLongitude()))).title("Time : " + coordinatesArrayList.get(i).getTime()));
+            }
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(markerBoundsBuilder.build(), 100));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(markerBoundsBuilder.build(), 200));
 
 // Get back the mutable Polyline
-        Polyline polyline = mMap.addPolyline(rectOptions);
+            Polyline polyline = mMap.addPolyline(rectOptions);
 
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
 
-                mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-                    @Override
-                    public View getInfoWindow(Marker marker) {
-                        return null;
-                    }
+                    mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                        @Override
+                        public View getInfoWindow(Marker marker) {
+                            return null;
+                        }
 
-                    @Override
-                    public View getInfoContents(Marker marker) {
-                        return null;
-                    }
-                });
-                return false;
-            }
-        });
+                        @Override
+                        public View getInfoContents(Marker marker) {
+                            return null;
+                        }
+                    });
+                    return false;
+                }
+            });
 
+        }else{
+            Toast.makeText(MapsActivity.this, "No logs yet.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void getCoordinates() {

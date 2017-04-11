@@ -56,6 +56,8 @@ public class TargetListAdapter extends RecyclerView.Adapter<TargetListAdapter.My
 
         if (targetData.getIsOnline()) {
             holder.ivOnline.setVisibility(View.VISIBLE);
+        }else{
+            holder.ivOnline.setVisibility(View.GONE);
         }
 
         Picasso.with(context)

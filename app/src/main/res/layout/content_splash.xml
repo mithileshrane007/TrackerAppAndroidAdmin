@@ -5,7 +5,6 @@
     android:id="@+id/content_splash"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.infiny.tracker_master.Activities.SplashActivity"
     tools:showIn="@layout/activity_splash">
@@ -14,7 +13,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/track_sales"
+        app:srcCompat="@drawable/tracker_logo"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:id="@+id/imageView2" />

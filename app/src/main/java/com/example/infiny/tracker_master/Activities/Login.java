@@ -1,6 +1,7 @@
 package com.example.infiny.tracker_master.Activities;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.ArrayMap;
@@ -91,8 +93,18 @@ public class Login extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-    }
+        new AlertDialog.Builder(this)
+                .setMessage("Exit App?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Intent.ACTION_MAIN);
+                        intent.addCategory(Intent.CATEGORY_HOME);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);//***Change Here***
+                        startActivity(intent);
+                        finishAffinity();
+                    }
+                }).setNegativeButton("No", null).show();    }
 
     public void submitForm() {
         status = 0;

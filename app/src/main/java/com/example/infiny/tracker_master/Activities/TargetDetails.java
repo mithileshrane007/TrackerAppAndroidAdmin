@@ -17,25 +17,25 @@ import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.infiny.tracker_master.Helpers.Config;
 import com.example.infiny.tracker_master.Models.Target;
 import com.example.infiny.tracker_master.R;
 import com.squareup.picasso.Picasso;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class TargetDetails extends AppCompatActivity {
 
-    private TextView tvFirstName,tvLastName,tvEmail,tvPhone;
+    private TextView tvName, tvStatus, tvEmail, tvPhone;
     private TextView tvReports;
     Target target;
     ImageView ivBackground, ivProfileImage;
     SharedPreferences prefTrackingId;
     SharedPreferences.Editor editorTrackingId;
-    RelativeLayout rlReports;
+    RelativeLayout rlReports, rlTrack;
     private SimpleDateFormat dateFormatter;
     Calendar newDate;
     private AlertDialog alertDialog;
@@ -57,31 +57,39 @@ public class TargetDetails extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
-        tvFirstName = (TextView) findViewById(R.id.tvFirstName);
-        tvLastName = (TextView) findViewById(R.id.tvLastName);
+        tvStatus = (TextView) findViewById(R.id.tvStatus);
+        tvName = (TextView) findViewById(R.id.tvName);
         tvEmail = (TextView) findViewById(R.id.tvEmail);
         tvPhone = (TextView) findViewById(R.id.tvPhone);
         tvReports = (TextView) findViewById(R.id.tvReports);
-        ivBackground = (ImageView) findViewById(R.id.ivBackground);
+//        ivBackground = (ImageView) findViewById(R.id.ivBackground);
         ivProfileImage = (ImageView) findViewById(R.id.ivProfileImage);
         rlReports = (RelativeLayout) findViewById(R.id.rlReports);
+        rlTrack = (RelativeLayout) findViewById(R.id.rlTrack);
         dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
 
         target = (Target) getIntent().getSerializableExtra("target");
 
         prefTrackingId = this.getSharedPreferences("TrackingId", MODE_PRIVATE);
-        prefTrackingId.edit().putString("TrackingId",target.getTrackingId()).apply();
+        prefTrackingId.edit().putString("TrackingId", target.getTrackingId()).apply();
 
-        tvFirstName.setText(target.getFirstName());
-        tvLastName.setText(target.getLastName());
+        tvName.setText(target.getFirstName() + " " + target.getLastName());
+
+        if (target.getIsOnline()) {
+            tvStatus.setText("  Online");
+            tvStatus.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.presence_online,0,0,0);
+        } else {
+            tvStatus.setText("Offline");
+        }
+
         tvEmail.setText(target.getEmail());
         tvPhone.setText(target.getPhoneNo());
 
-        Picasso.with(this)
-                .load(Config.BASE_URL + target.getProfilePic())
-                .placeholder(R.drawable.gradient)
-                .into(ivBackground);
+//        Picasso.with(this)
+//                .load(Config.BASE_URL + target.getProfilePic())
+//                .placeholder(R.drawable.gradient)
+//                .into(ivBackground);
 
         Picasso.with(this)
                 .load(Config.BASE_URL + target.getProfilePic())
@@ -91,11 +99,11 @@ public class TargetDetails extends AppCompatActivity {
         rlReports.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(target.getIsOnline()){
-                    Intent intent = new Intent(TargetDetails.this,MapsActivity.class);
-                    intent.putExtra("date",new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
-                    startActivity(intent);
-                }else{
+//                if (target.getIsOnline()) {
+//                    Intent intent = new Intent(TargetDetails.this, MapsActivity.class);
+//                    intent.putExtra("date", new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
+//                    startActivity(intent);
+//                } else {
 
                     AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(TargetDetails.this);
                     // ...Irrelevant code for customizing the buttons and title
@@ -125,9 +133,9 @@ public class TargetDetails extends AppCompatActivity {
                         public void onClick(View v) {
                             checkForm();
                             if (status == 0) {
-                                Intent intent = new Intent(TargetDetails.this,Reports.class);
-                                intent.putExtra("fromDate",tvFromDate.getText().toString().toLowerCase().trim());
-                                intent.putExtra("toDate",tvToDate.getText().toString().trim());
+                                Intent intent = new Intent(TargetDetails.this, Reports.class);
+                                intent.putExtra("fromDate", tvFromDate.getText().toString().toLowerCase().trim());
+                                intent.putExtra("toDate", tvToDate.getText().toString().trim());
                                 startActivity(intent);
                                 alertDialog.dismiss();
                             }
@@ -138,13 +146,27 @@ public class TargetDetails extends AppCompatActivity {
                     alertDialog.setTitle("Select dates");
                     alertDialog.show();
 //                    new DateDialogFragment().show(getFragmentManager(), "dateFrag");
+//                }
+            }
+        });
+
+        rlTrack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (target.getIsOnline()) {
+                    Intent intent = new Intent(TargetDetails.this, MapsActivity.class);
+                    intent.putExtra("date", new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
+                    startActivity(intent);
+                } else {
+                    rlTrack.setBackgroundColor(Color.parseColor("#9E9E9E"));
+                    Toast.makeText(TargetDetails.this, "User is offline now.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
     }
 
-    public void selectDate(final TextView tvHolder){
+    public void selectDate(final TextView tvHolder) {
         Calendar newCalendar = Calendar.getInstance();
         new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
 
@@ -170,9 +192,9 @@ public class TargetDetails extends AppCompatActivity {
             tvFromDate.setError("Please select a date");
             tvFromDate.setHintTextColor(Color.RED);
             status = 1;
-        }else if(!TextUtils.isEmpty(tvToDate.getText())){
+        } else if (!TextUtils.isEmpty(tvToDate.getText())) {
             try {
-                if(dateFormatter.parse(tvFromDate.getText().toString()).after(dateFormatter.parse(tvToDate.getText().toString()))){
+                if (dateFormatter.parse(tvFromDate.getText().toString()).after(dateFormatter.parse(tvToDate.getText().toString()))) {
                     tvFromDate.setError("");
                     status = 1;
                 }
@@ -185,9 +207,9 @@ public class TargetDetails extends AppCompatActivity {
             tvToDate.setError("Please select a date");
             tvToDate.setHintTextColor(Color.RED);
             status = 1;
-        }else if(!TextUtils.isEmpty(tvFromDate.getText())){
+        } else if (!TextUtils.isEmpty(tvFromDate.getText())) {
             try {
-                if(dateFormatter.parse(tvToDate.getText().toString()).before(dateFormatter.parse(tvFromDate.getText().toString()))){
+                if (dateFormatter.parse(tvToDate.getText().toString()).before(dateFormatter.parse(tvFromDate.getText().toString()))) {
                     tvFromDate.setError("");
                     status = 1;
                 }

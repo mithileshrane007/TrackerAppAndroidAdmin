@@ -73,7 +73,7 @@ public class AddTarget extends AppCompatActivity {
     private TextInputLayout lastName;
     private TextInputLayout timeInterval;
     private TextInputLayout timeOut;
-    private ImageView ivProfilePic;
+    private ImageView ivProfilePic,ivEdit;
     private Button btSave;
     private Bitmap profileImage;
     private int status;
@@ -105,6 +105,7 @@ public class AddTarget extends AppCompatActivity {
         etLastName = (EditText) findViewById(R.id.etLastName);
         etTimeInterval = (EditText) findViewById(R.id.etTimeInterval);
         etTimeOut = (EditText) findViewById(R.id.etTimeOut);
+        ivEdit = (ImageView) findViewById(R.id.ivEdit);
 
         email = (TextInputLayout) findViewById(R.id.email);
         firstName = (TextInputLayout) findViewById(R.id.firstName);
@@ -113,17 +114,9 @@ public class AddTarget extends AppCompatActivity {
         timeInterval = (TextInputLayout) findViewById(R.id.timeInterval);
         timeOut = (TextInputLayout) findViewById(R.id.timeOut);
 
-        ivProfilePic.setOnClickListener(new View.OnClickListener() {
+        ivEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        requestPermissions(perms, permsRequestCode);
-                    }
-
-                } catch (NoSuchMethodError e) {
-                    e.printStackTrace();
-                }
                 selectImage();
             }
         });

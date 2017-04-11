@@ -159,8 +159,8 @@ public class Register extends AppCompatActivity {
             status = 1;
         }
 
-        if (TextUtils.isEmpty(password.getEditText().getText().toString().trim()) || password.getEditText().getText().toString().trim().length() < 8) {
-            password.setError("Password must have minimum 8 characters");
+        if (TextUtils.isEmpty(password.getEditText().getText().toString().trim()) || password.getEditText().getText().toString().trim().length() < 5) {
+            password.setError("Password must have minimum 5 characters");
             status = 1;
 
             etPassword.addTextChangedListener(new TextWatcher() {
